@@ -1,0 +1,17 @@
+{
+  "planner": {
+    "primary": { "provider": "ollama", "model": "llama3.1:8b" },
+    "fallback": { "provider": "openai_compat", "model": "gpt-4o-mini" }
+  },
+  "executor": {
+    "primary": { "provider": "openai_compat", "model": "gpt-4o-mini" },
+    "fallback": { "provider": "ollama", "model": "llama3.1:8b" }
+  },
+  "rules": {
+    "use_strong_executor_if": {
+      "min_user_chars": 600,
+      "contains_any": ["refactor", "design", "architecture", "optimize", "security", "threat model", "test plan"]
+    },
+    "force_local_planner": true
+  }
+}

@@ -1,0 +1,366 @@
+[planner] messages count: 2
+[planner] user_text: From now on, always answer in strict bullet points.
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[executor] messages count: 4
+[executor] user_text: Tool logs:
+- save_memory({'kind': 'preference', 'text': 'Always answer in strict bullet points', 'importance': 5}): Memory saved: [preference] Always answer in strict bullet points
+---
+[planner] messages count: 3
+[planner] user_text: How do I list files?
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 5
+[planner] user_text: How do I list files?
+
+Tool logs so far:
+- list_files: .env
+.venv
+app.py
+assistant.db
+cli.py
+mock_debug.txt
+mock_llm.py
+ping.txt
+quick_test.py
+README.md
+server.log
+start_server.bat
+test_5e.py
+test_calc_time.py
+test_gate_logic.py
+test_memory.py
+test_memory
+[planner] has_logs=False, not_none=True
+---
+[executor] messages count: 4
+[executor] user_text: Tool logs:
+- list_files({'path': '.'}): .env
+.venv
+app.py
+assistant.db
+cli.py
+mock_debug.txt
+mock_llm.py
+ping.txt
+quick_test.py
+README.md
+server.log
+start_server.bat
+test_5e.py
+test_calc_time.py
+test_gate_logic.py
+test_memory.py
+test_memory_format.py
+test_mock.py
+test_multi_tool.py
+test_output.txt
+test_read_ping.py
+test_retrieve.py
+test_save_memory_gate.py
+test_simple.py
+test_tools.py
+test_trace.py
+tools.py
+traces
+verify_schema.py
+__pycache__
+---
+[planner] messages count: 3
+[planner] user_text: What is 2+2?
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[executor] messages count: 4
+[executor] user_text: Tool logs:
+No tools were used.
+---
+[planner] messages count: 3
+[planner] user_text: What is 2+2?
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[executor] messages count: 4
+[executor] user_text: Tool logs:
+No tools were used.
+---
+[planner] messages count: 3
+[planner] user_text: List files in current directory
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 5
+[planner] user_text: List files in current directory
+
+Tool logs so far:
+- list_files: .env
+.venv
+app.py
+assistant.db
+cli.py
+mock_debug.txt
+mock_llm.py
+ping.txt
+quick_test.py
+README.md
+server.log
+start_server.bat
+test_5e.py
+test_calc_time.py
+test_gate_logic.py
+test_memory.py
+test_memory
+[planner] has_logs=False, not_none=True
+---
+[executor] messages count: 4
+[executor] user_text: Tool logs:
+- list_files({'path': '.'}): .env
+.venv
+app.py
+assistant.db
+cli.py
+mock_debug.txt
+mock_llm.py
+ping.txt
+quick_test.py
+README.md
+server.log
+start_server.bat
+test_5e.py
+test_calc_time.py
+test_gate_logic.py
+test_memory.py
+test_memory_format.py
+test_mock.py
+test_multi_tool.py
+test_output.txt
+test_read_ping.py
+test_retrieve.py
+test_save_memory_gate.py
+test_simple.py
+test_tools.py
+test_trace.py
+tools.py
+traces
+verify_schema.py
+__pycache__
+---
+[planner] messages count: 3
+[planner] user_text: What is the current time?
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 5
+[planner] user_text: What is the current time?
+
+Tool logs so far:
+- current_time: Wednesday, December 24, 2025 at 11:43 AM
+[planner] has_logs=False, not_none=True
+---
+[executor] messages count: 4
+[executor] user_text: Tool logs:
+- current_time({}): Wednesday, December 24, 2025 at 11:43 AM
+---
+[planner] messages count: 3
+[planner] user_text: Calculate 5+3
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[executor] messages count: 4
+[executor] user_text: Tool logs:
+No tools were used.
+---
+[planner] messages count: 3
+[planner] user_text: What time is it?
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 5
+[planner] user_text: What time is it?
+
+Tool logs so far:
+- current_time: Wednesday, December 24, 2025 at 11:43 AM
+[planner] has_logs=False, not_none=True
+---
+[executor] messages count: 4
+[executor] user_text: Tool logs:
+- current_time({}): Wednesday, December 24, 2025 at 11:43 AM
+---
+[planner] messages count: 3
+[planner] user_text: list files
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 5
+[planner] user_text: list files
+
+Tool logs so far:
+- list_files: .env
+.venv
+app.py
+assistant.db
+cli.py
+mock_debug.txt
+mock_llm.py
+ping.txt
+quick_test.py
+README.md
+server.log
+start_server.bat
+test_5e.py
+test_calc_time.py
+test_gate_logic.py
+test_memory.py
+test_memory
+[planner] has_logs=False, not_none=True
+---
+[executor] messages count: 4
+[executor] user_text: Tool logs:
+- list_files({'path': '.'}): .env
+.venv
+app.py
+assistant.db
+cli.py
+mock_debug.txt
+mock_llm.py
+ping.txt
+quick_test.py
+README.md
+server.log
+start_server.bat
+test_5e.py
+test_calc_time.py
+test_gate_logic.py
+test_memory.py
+test_memory_format.py
+test_mock.py
+test_multi_tool.py
+test_output.txt
+test_read_ping.py
+test_retrieve.py
+test_save_memory_gate.py
+test_simple.py
+test_tools.py
+test_trace.py
+tools.py
+traces
+verify_schema.py
+__pycache__
+---
+[planner] messages count: 3
+[planner] user_text: What time is it?
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 5
+[planner] user_text: What time is it?
+
+Tool logs so far:
+- current_time: Wednesday, December 24, 2025 at 11:57 AM
+[planner] has_logs=False, not_none=True
+---
+[planner] messages count: 2
+[planner] user_text: Hello
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 3
+[planner] user_text: Hello
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 3
+[planner] user_text: Hello
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 3
+[planner] user_text: Hello
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 3
+[planner] user_text: Hello
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 3
+[planner] user_text: List files in workspace
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 5
+[planner] user_text: List files in workspace
+
+Tool logs so far:
+- list_files: .env
+.venv
+app.py
+assistant.db
+cli.py
+mock_debug.txt
+mock_llm.py
+ping.txt
+quick_test.py
+README.md
+routing_policy.json
+server.log
+start_server.bat
+test_5e.py
+test_calc_time.py
+test_gate_logic.py
+test_m
+[planner] has_logs=False, not_none=True
+---
+[planner] messages count: 3
+[planner] user_text: Please design the architecture for xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 2
+[planner] user_text: hi
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
+[planner] messages count: 3
+[planner] user_text: From now on, always respond with bullet points.
+
+Tool logs so far:
+None yet
+[planner] has_logs=False, not_none=False
+---
