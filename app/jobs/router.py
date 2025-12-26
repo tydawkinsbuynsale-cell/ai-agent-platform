@@ -28,10 +28,23 @@ class JobStatusResponse(BaseModel):
 
 @router.post("", response_model=JobCreateResponse)
 def create_job(req: JobCreateRequest) -> JobCreateResponse:
+    from app.settings import get_settings
+    from app.jobs.runner import run_job
+
     job_id = str(uuid4())
-    # For now: accept and store; no execution yet
     _JOBS[job_id] = {"status": "queued", "job_type": req.job_type, "payload": req.payload, "result": None}
-    return JobCreateResponse(job_id=job_id, status="queued")
+
+    settings = get_settings()
+    if settings.is_internal:
+        try:
+            result = run_job(req.job_type, req.payload)
+            _JOBS[job_id]["status"] = "succeeded"
+            _JOBS[job_id]["result"] = result
+        except Exception as e:
+            _JOBS[job_id]["status"] = "failed"
+            _JOBS[job_id]["result"] = {"error": str(e)}
+
+    return JobCreateResponse(job_id=job_id, status=_JOBS[job_id]["status"])
 
 
 @router.get("/{job_id}", response_model=JobStatusResponse)
