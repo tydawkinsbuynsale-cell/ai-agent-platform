@@ -9,6 +9,8 @@ from typing import Any, Dict, List, Optional
 from agent.tools.base import ToolError
 from agent.tools.base import ToolRegistry
 from agent.core.memory_store import MemoryStore, keyword_retrieve
+from agent.core.strict_verifier import strict_verify
+from agent.core.policy import enforce_post_change_checks
 
 
 class AgentMode(str, Enum):
@@ -53,6 +55,7 @@ class Agent:
     def __init__(self, tools: ToolRegistry, mode: AgentMode) -> None:
         self.tools = tools
         self.mode = mode
+        self._code_modified = False
 
     # ---- Phase hooks (LLM-backed later) ----
 
@@ -80,12 +83,13 @@ class Agent:
           "reason": "..."
         }
         """
-        raise NotImplementedError("Verifier not wired yet")
+        return strict_verify(goal, observations, self._code_modified)
 
     # ---- Execution ----
 
     def run(self, user_input: str) -> Dict[str, Any]:
         trace = AgentTrace()
+        self._code_modified = False
 
         mem = MemoryStore()
         facts = mem.read_project_facts()
@@ -110,6 +114,7 @@ class Agent:
 
         # PLAN
         plan = self.plan(user_input)
+        plan = enforce_post_change_checks(plan)
         trace.add("PLAN", plan)
 
         observations: List[Dict[str, Any]] = []
@@ -141,6 +146,11 @@ class Agent:
                     "result": result,
                     "error": None,
                 }
+                
+                # Track code modifications
+                if tool_name in ("fs.apply_patch", "fs.append_text"):
+                    self._code_modified = True
+                    
             except ToolError as e:
                 obs = {
                     "tool": tool_name,
@@ -160,5 +170,6 @@ class Agent:
             "goal": plan.get("goal"),
             "verification": verification,
             "observations": observations,
+            "code_modified": self._code_modified,
             "trace": trace.to_dict(),
         }
