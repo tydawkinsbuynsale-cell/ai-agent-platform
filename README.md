@@ -24,6 +24,16 @@ This project is an AI agent platform built to be **safe-by-default** and **measu
 - **Strict verification** blocks false success
 - **Deterministic eval suite** ensures stability over time
 
+## Modes
+- **api**: accepts jobs, returns queued
+- **internal**: executes jobs synchronously (CLI-friendly)
+- **cloud**: production-safe defaults (auth/rate limits planned)
+
+## CLI
+- **submit**: create job
+- **status**: fetch job state
+- **run**: submit + poll until completion
+
 ## Quick demo
 
 ### 1) Install
