@@ -1,5 +1,8 @@
 # AI Assistant
 
+![CI](https://github.com/tydawkinsbuynsale-cell/ai_assistant/actions/workflows/ci.yml/badge.svg)
+
+A production-grade AI coding assistant...
 A production-grade AI coding assistant with tool chaining, intelligent memory, and multi-model routing. Built with FastAPI and designed for workspace-aware development tasks.
 
 ## Features

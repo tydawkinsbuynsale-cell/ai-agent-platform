@@ -14,3 +14,4 @@ workspace/
 # OS / IDE
 .vscode/
 .DS_Store
+memory/
