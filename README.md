@@ -2,8 +2,100 @@
 
 ![CI](https://github.com/tydawkinsbuynsale-cell/ai_assistant/actions/workflows/ci.yml/badge.svg)
 
-A production-grade AI coding assistant...
 A production-grade AI coding assistant with tool chaining, intelligent memory, and multi-model routing. Built with FastAPI and designed for workspace-aware development tasks.
+
+## Architecture (trustworthy agent design)
+
+This project is an AI agent platform built to be **safe-by-default** and **measurable**.
+
+### Core flow
+1. **Memory preload + deterministic retrieval**
+2. **PLAN** (LLM generates strict JSON plan)
+3. **Policy enforcement** (auto-inject lint/tests after any write)
+4. **ACT** (schema-validated tool execution)
+5. **VERIFY** (proof-based; requires passing checks on code changes)
+6. **Memory write-back** (only after verified success)
+7. **Memory hygiene** (bounded growth + pruning)
+8. **Evals + CI** (regression detection)
+
+### Guardrails
+- **BUILDER vs REVIEWER** modes (authority separation)
+- **Unified-diff patching** for edits (reviewable, fail-fast)
+- **Strict verification** blocks false success
+- **Deterministic eval suite** ensures stability over time
+
+## Quick demo
+
+### 1) Install
+```bash
+pip install -r requirements.txt
+pip install python-dotenv requests
+```
+
+### 2) Configure OpenAI
+
+Create a `.env` file in repo root:
+```ini
+OPENAI_API_KEY=...
+OPENAI_MODEL=gpt-4-mini
+```
+
+### 3) Run the LLM agent (read-only)
+```bash
+python -m agent.smoke_test_llm_agent
+```
+
+### 4) Run deterministic evals (quality gate)
+```bash
+python -m evals.run_evals
+```
+
+Expected: **9 passed, 0 failed**
+
+### 5) Inspect a trace
+```bash
+python -c "import json; print(json.dumps(json.load(open('traces/1766594838_4e2d3157-dbbf-4632-96da-732c019b71ac.json')), indent=2))" | head -50
+```
+
+See: Planning → Tool execution → Verification → Memory write-back
+
+### 6) Check memory hygiene
+```bash
+cat memory/decisions.md
+```
+
+Bounded growth (max 30 decisions, 25k chars)
+
+## Proof (regression-resistant)
+- CI runs deterministic evals on every push/PR.
+- Evals are LLM-free to prevent flaky results.
+- Any regression fails CI automatically.
+
+## Architecture diagram
+
+```mermaid
+flowchart TD
+    U[User Input] --> M[Memory Load + Retrieval]
+
+    M --> P[PLAN<br/>LLM JSON Planner]
+    P --> PE[Policy Enforcement<br/>Inject lint/tests on writes]
+
+    PE --> A[ACT<br/>Tool Execution]
+
+    A -->|fs.apply_patch / fs.append_text| CM[Code Modified]
+    A -->|dev.run_linter + dev.run_tests| Q[Quality Checks]
+
+    CM --> V[VERIFY<br/>Strict Verification]
+    Q --> V
+
+    V -->|success| MW[Memory Write-back]
+    MW --> MH[Memory Hygiene<br/>Summarize + Prune]
+
+    V -->|failure| F[Fail with Reason]
+
+    MH --> E[Evals + CI]
+    E -->|regressions| F
+```
 
 ## Features
 

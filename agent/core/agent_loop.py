@@ -11,6 +11,9 @@ from agent.tools.base import ToolRegistry
 from agent.core.memory_store import MemoryStore, keyword_retrieve
 from agent.core.strict_verifier import strict_verify
 from agent.core.policy import enforce_post_change_checks
+from agent.core.limits import RunLimits
+from agent.core.memory_hygiene import summarize_and_prune_decisions
+from agent.core.parallel import run_parallel_tools
 
 
 class AgentMode(str, Enum):
@@ -52,9 +55,10 @@ class AgentTrace:
 
 
 class Agent:
-    def __init__(self, tools: ToolRegistry, mode: AgentMode) -> None:
+    def __init__(self, tools: ToolRegistry, mode: AgentMode, limits: RunLimits | None = None) -> None:
         self.tools = tools
         self.mode = mode
+        self.limits = limits or RunLimits()
         self._code_modified = False
 
     # ---- Phase hooks (LLM-backed later) ----
@@ -88,6 +92,7 @@ class Agent:
     # ---- Execution ----
 
     def run(self, user_input: str) -> Dict[str, Any]:
+        start_ts = time.time()
         trace = AgentTrace()
         self._code_modified = False
 
@@ -117,10 +122,30 @@ class Agent:
         plan = enforce_post_change_checks(plan)
         trace.add("PLAN", plan)
 
+        # Cap steps
+        steps = plan.get("steps", [])
+        if len(steps) > self.limits.max_steps:
+            raise RuntimeError(f"Plan exceeds max_steps={self.limits.max_steps}")
+
         observations: List[Dict[str, Any]] = []
 
-        # ACT + OBSERVE
+        # Separate dev checks (lint/tests) from normal steps for parallel execution
+        dev_check_tools = ("dev.run_linter", "dev.run_tests")
+        normal_steps = []
+        dev_parallel = []
+        
         for step in plan.get("steps", []):
+            if step["tool"] in dev_check_tools:
+                dev_parallel.append(step)
+            else:
+                normal_steps.append(step)
+
+        # ACT + OBSERVE (normal steps sequentially)
+        for step in normal_steps:
+            # Check timeout before each step
+            if time.time() - start_ts > self.limits.max_total_seconds:
+                raise RuntimeError("Run aborted: max_total_seconds exceeded")
+
             tool_name = step["tool"]
             args = step["args"]
 
@@ -139,12 +164,15 @@ class Agent:
                 continue
 
             try:
+                t0 = time.time()
                 result = self.tools.call(tool_name, args)
+                lat = time.time() - t0
                 obs = {
                     "tool": tool_name,
                     "args": args,
                     "result": result,
                     "error": None,
+                    "latency_sec": round(lat, 3),
                 }
                 
                 # Track code modifications
@@ -161,10 +189,45 @@ class Agent:
 
             observations.append(obs)
             trace.add("OBSERVE", obs)
+        
+        # Execute dev checks in parallel (if any)
+        if dev_parallel:
+            par_obs = run_parallel_tools(self.tools, dev_parallel, max_workers=2)
+            for obs in par_obs:
+                observations.append(obs)
+                trace.add("OBSERVE", obs)
 
         # VERIFY
         verification = self.verify(plan.get("goal", ""), observations)
         trace.add("VERIFY", verification)
+
+        # Memory write-back: only after proven success and real changes
+        if verification.get("success") and self._code_modified:
+            try:
+                self.tools.call(
+                    "memory.append_decision",
+                    {
+                        "title": "Automated code change verified",
+                        "body": (
+                            f"Goal: {plan.get('goal')}\n\n"
+                            "Result: Code change applied and verified.\n"
+                            "Quality gates: tests and linter passed.\n"
+                        ),
+                    },
+                )
+                trace.add(
+                    "MEMORY_WRITE",
+                    {"status": "appended decision"},
+                )
+                
+                # Run memory hygiene after successful write
+                h = summarize_and_prune_decisions()
+                trace.add("MEMORY_HYGIENE", h)
+            except Exception as e:
+                trace.add(
+                    "MEMORY_WRITE",
+                    {"status": "failed", "error": str(e)},
+                )
 
         return {
             "goal": plan.get("goal"),
@@ -172,4 +235,8 @@ class Agent:
             "observations": observations,
             "code_modified": self._code_modified,
             "trace": trace.to_dict(),
+            "metrics": {
+                "total_seconds": round(time.time() - start_ts, 3),
+                "steps_executed": len(observations),
+            },
         }

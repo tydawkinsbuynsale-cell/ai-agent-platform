@@ -43,6 +43,18 @@ class ToolRegistry:
     def list_tools(self) -> Dict[str, str]:
         return {name: spec.description for name, spec in self._tools.items()}
 
+    def get_tool_schemas(self) -> Dict[str, Dict[str, Any]]:
+        """Return tool schemas with parameter information for LLM planning."""
+        result = {}
+        for name, spec in self._tools.items():
+            schema = spec.input_model.model_json_schema()
+            result[name] = {
+                "description": spec.description,
+                "parameters": schema.get("properties", {}),
+                "required": schema.get("required", [])
+            }
+        return result
+
     def call(self, tool_name: str, raw_args: Dict[str, Any]) -> Dict[str, Any]:
         if tool_name not in self._tools:
             raise ToolInputError(f"Unknown tool: {tool_name}")
